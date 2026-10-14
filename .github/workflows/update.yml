@@ -1,0 +1,46 @@
+name: Mise à jour du podcast
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # tous les jours à 5 h UTC (6-7 h en France)
+  workflow_dispatch:       # bouton « Run workflow » pour lancer à la main
+
+permissions:
+  contents: write          # créer les Releases et pousser feed.xml
+
+concurrency:
+  group: podcast
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Installer ffmpeg et yt-dlp
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install -U yt-dlp
+
+      - name: Télécharger les VODs et générer le flux
+        env:
+          TWITCH_CHANNEL: ${{ vars.TWITCH_CHANNEL }}
+          MAX_VODS: ${{ vars.MAX_VODS || '5' }}
+          GH_TOKEN: ${{ github.token }}
+        run: python twitch2podcast.py
+
+      - name: Enregistrer le flux
+        if: always()       # même si un téléchargement a échoué, on garde ce qui a marché
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add episodes docs 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Mise à jour du podcast"
+          git push
