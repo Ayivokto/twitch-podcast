@@ -8,6 +8,35 @@
     <itunes:author>zawa_prod</itunes:author>
     <itunes:explicit>false</itunes:explicit>
     <itunes:block>Yes</itunes:block>
-
+    <item>
+      <title>GASPARD G enterre GLUCKSMANN (mdr ah bon ??) + POLONY CANDIDATE oui bah oui tjrs plus + MELENCHON + BILLETS du ZAWA CLUB 13 novembre !billet</title>
+      <description>GASPARD G enterre GLUCKSMANN (mdr ah bon ??) + POLONY CANDIDATE oui bah oui tjrs plus + MELENCHON + BILLETS du ZAWA CLUB 13 novembre !billet</description>
+      <guid isPermaLink="false">twitch-v2900546477</guid>
+      <pubDate>Wed, 14 Oct 2026 14:10:56 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2900546477</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2900546477/v2900546477.m4a" length="379703365" type="audio/x-m4a"/>
+      <itunes:duration>13403</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/6ed9fc4917010d765946_zawa_prod_317998174946_1791987049//thumb/thumb0-0x0.jpg"/>
+    </item>
+    <item>
+      <title>GLUCKSMANN : le GROS POISSON dans une (toute) PETITE MARRE (analyse de sa victoire) + Les GILETS JAUNES le RETOUR ? (17 octobre go brrrrrr)</title>
+      <description>GLUCKSMANN : le GROS POISSON dans une (toute) PETITE MARRE (analyse de sa victoire) + Les GILETS JAUNES le RETOUR ? (17 octobre go brrrrrr)</description>
+      <guid isPermaLink="false">twitch-v2899005873</guid>
+      <pubDate>Mon, 12 Oct 2026 18:18:03 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2899005873</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2899005873/v2899005873.m4a" length="431939723" type="audio/x-m4a"/>
+      <itunes:duration>14819</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/40af43354afa931c4487_zawa_prod_317982896482_1791829076//thumb/thumb0-0x0.jpg"/>
+    </item>
+    <item>
+      <title>Une MAIRE TRANS dans la FRANCE PROFONDE !</title>
+      <description>Une MAIRE TRANS dans la FRANCE PROFONDE !</description>
+      <guid isPermaLink="false">twitch-v2897250363</guid>
+      <pubDate>Sat, 10 Oct 2026 19:31:02 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2897250363</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2897250363/v2897250363.m4a" length="165946342" type="audio/x-m4a"/>
+      <itunes:duration>8220</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/614ca624668f51eea3bd_zawa_prod_317963829730_1791660658//thumb/thumb0-0x0.jpg"/>
+    </item>
   </channel>
 </rss>
