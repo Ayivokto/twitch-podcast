@@ -57,9 +57,16 @@ def upload(vid: str, title: str, path: Path) -> str:
 
 
 def fetch_vods(db: dict) -> None:
-    url = f"https://www.twitch.tv/{CHANNEL}/videos?filter=archives&sort=time"
-    with yt_dlp.YoutubeDL({"extract_flat": True, "playlistend": MAX_VODS, "quiet": True}) as ydl:
-        listing = ydl.extract_info(url, download=False)
+    entries = []
+    # La liste « archives » revient parfois vide : on retombe sur la liste complète.
+    for url in (f"https://www.twitch.tv/{CHANNEL}/videos?filter=archives&sort=time",
+                f"https://www.twitch.tv/{CHANNEL}/videos?filter=all&sort=time"):
+        with yt_dlp.YoutubeDL({"extract_flat": True, "playlistend": MAX_VODS}) as ydl:
+            entries = list(ydl.extract_info(url, download=False).get("entries") or [])
+        print(f"{CHANNEL} : {len(entries)} vidéo(s) trouvée(s) via {url}")
+        if entries:
+            break
+    listing = {"entries": entries}
 
     opts = {
         "format": "bestaudio/best",
