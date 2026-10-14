@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>simonpuech — Lives Twitch</title>
+    <link>https://www.twitch.tv/simonpuech</link>
+    <description>Rediffusions audio des lives de simonpuech (usage personnel).</description>
+    <language>fr</language>
+    <itunes:author>simonpuech</itunes:author>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:block>Yes</itunes:block>
+    <item>
+      <title>FR Actu - Manifs Lycéennes &amp; Data Center Russe ! 🤖</title>
+      <description>FR Actu - Manifs Lycéennes &amp; Data Center Russe ! 🤖</description>
+      <guid isPermaLink="false">twitch-v2899623564</guid>
+      <pubDate>Tue, 13 Oct 2026 12:22:18 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2899623564</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2899623564/v2899623564.m4a" length="156869406" type="audio/x-m4a"/>
+      <itunes:duration>8627</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/594abc53fb0b5e9ddf91_simonpuech_318004136292_1791894133//thumb/thumb0-0x0.jpg"/>
+    </item>
+    <item>
+      <title>FR Actu - Le Pape en France &amp; Xi Jinping à Washington. 🐲</title>
+      <description>FR Actu - Le Pape en France &amp; Xi Jinping à Washington. 🐲</description>
+      <guid isPermaLink="false">twitch-v2883461463</guid>
+      <pubDate>Fri, 25 Sep 2026 08:53:28 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2883461463</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2883461463/v2883461463.m4a" length="151157730" type="audio/x-m4a"/>
+      <itunes:duration>8236</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/34bb2091a487e1047c99_simonpuech_317850703459_1790326401//thumb/thumb0-0x0.jpg"/>
+    </item>
+    <item>
+      <title>FR Actu - Le gouvernement attaque les retraites &amp; la gauche gagner Berlin ! 👴🏼</title>
+      <description>FR Actu - Le gouvernement attaque les retraites &amp; la gauche gagner Berlin ! 👴🏼</description>
+      <guid isPermaLink="false">twitch-v2880916314</guid>
+      <pubDate>Tue, 22 Sep 2026 09:43:19 GMT</pubDate>
+      <link>https://www.twitch.tv/videos/2880916314</link>
+      <enclosure url="https://github.com/Ayivokto/twitch-podcast/releases/download/vod-v2880916314/v2880916314.m4a" length="195408850" type="audio/x-m4a"/>
+      <itunes:duration>10858</itunes:duration>
+      <itunes:image href="https://static-cdn.jtvnw.net/cf_vods/d3stzm2eumvgb4/fab9a78218cc0ff23aa7_simonpuech_317817569892_1790070192//thumb/thumb0-0x0.jpg"/>
+    </item>
+  </channel>
+</rss>
