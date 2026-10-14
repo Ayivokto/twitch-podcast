@@ -45,6 +45,9 @@ def save_db(db: dict) -> None:
 def upload(vid: str, title: str, path: Path) -> str:
     """Crée une Release « vod-<id> » contenant le fichier audio, renvoie son URL."""
     tag = f"vod-{vid}"
+    # Une Release laissée par un lancement interrompu bloquerait la création : on la remplace.
+    subprocess.run(["gh", "release", "delete", tag, "--repo", REPO, "--yes", "--cleanup-tag"],
+                   capture_output=True)
     subprocess.run(
         ["gh", "release", "create", tag, str(path),
          "--repo", REPO, "--title", title[:120], "--notes", f"Twitch VOD {vid}"],
