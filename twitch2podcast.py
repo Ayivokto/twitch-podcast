@@ -29,6 +29,8 @@ MAX_ASSET = 2 * 1024**3  # limite GitHub par fichier de Release
 CHANNELS = os.environ["TWITCH_CHANNEL"]  # une ou plusieurs chaînes séparées par des virgules
 CHANNEL = ""
 MAX_VODS = int(os.environ.get("MAX_VODS", "5"))
+REBUILD = os.environ.get("REBUILD") == "true"  # retélécharge tous les épisodes déjà connus
+LIVE_MARGIN = 45 * 60  # une VOD qui a grandi il y a moins de 45 min = live encore en cours
 REPO = os.environ["GITHUB_REPOSITORY"]
 OWNER, NAME = REPO.split("/")
 PAGES_URL = f"https://{OWNER.lower()}.github.io/{NAME}"
@@ -66,47 +68,71 @@ def fetch_vods(db: dict) -> None:
         print(f"{CHANNEL} : {len(entries)} vidéo(s) trouvée(s) via {url}")
         if entries:
             break
-    listing = {"entries": entries}
+    todo = [(e["id"], e["url"]) for e in entries if REBUILD or e["id"] not in db]
+    if REBUILD:  # on reprend aussi les anciens épisodes, plus vieux que la liste
+        listed = {vid for vid, _ in todo}
+        todo += [(vid, f"https://www.twitch.tv/videos/{vid.lstrip('v')}")
+                 for vid in db if vid not in listed]
+    for vid in {e["id"] for e in entries} & db.keys() - {v for v, _ in todo}:
+        print(f"Déjà présent : {vid}")
+    for vid, url in todo:
+        process(vid, url, db)
 
-    opts = {
-        "format": "bestaudio/best",
-        "outtmpl": str(WORK / "%(id)s.%(ext)s"),
-        # Mono 64 kbps ≈ 30 Mo/heure : un live de 8 h reste sous 2 Go.
-        "postprocessors": [{"key": "FFmpegExtractAudio",
-                            "preferredcodec": "m4a", "preferredquality": "64"}],
-        "postprocessor_args": {"extractaudio": ["-ac", "1"]},
-    }
+
+def probe_duration(path: Path) -> int:
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                          "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+    return int(float(out.stdout.strip() or 0))
+
+
+def process(vid: str, url: str, db: dict) -> None:
+    """Télécharge une VOD, la réencode en audio léger et la publie."""
+    try:
+        with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
+            info = ydl.extract_info(url, download=False)
+    except yt_dlp.utils.DownloadError as e:
+        print(f"Ignoré {vid} : {e}")  # VOD supprimée par Twitch ou réservée aux abonnés
+        return
+
+    # Pendant un live, la VOD existe déjà mais s'allonge encore : la prendre maintenant
+    # donnerait un épisode coupé. On attend la vérification suivante.
+    end = (info.get("timestamp") or 0) + (info.get("duration") or 0)
+    if datetime.now(timezone.utc).timestamp() - end < LIVE_MARGIN:
+        print(f"Live encore en cours, repoussé : {vid}")
+        return
+
+    # « Audio_Only » est le flux audio seul de Twitch ; à défaut, le plus petit flux vidéo.
+    opts = {"format": "Audio_Only/bestaudio/worst", "outtmpl": str(WORK / f"{vid}.src.%(ext)s")}
     with yt_dlp.YoutubeDL(opts) as ydl:
-        for entry in listing.get("entries", []):
-            vid = entry["id"]
-            if vid in db:
-                print(f"Déjà présent : {vid}")
-                continue
-            try:
-                info = ydl.extract_info(entry["url"], download=True)
-            except yt_dlp.utils.DownloadError as e:
-                # Un live encore en cours ou une VOD réservée aux abonnés : on passe.
-                print(f"Ignoré {vid} : {e}")
-                continue
-            path = WORK / f"{info['id']}.m4a"
-            size = path.stat().st_size
-            if size > MAX_ASSET:
-                print(f"Ignoré {vid} : fichier trop gros ({size} octets)")
-                path.unlink()
-                continue
-            title = info.get("title") or vid
-            db[vid] = {
-                "title": title,
-                "description": info.get("description") or "",
-                "url": upload(vid, title, path),
-                "size": size,
-                "duration": int(info.get("duration") or 0),
-                "date": info.get("timestamp") or datetime.now(timezone.utc).timestamp(),
-                "link": info.get("webpage_url", ""),
-                "thumbnail": info.get("thumbnail", ""),
-            }
-            path.unlink()
-            save_db(db)  # sauvegarde après chaque épisode, au cas où la suite échoue
+        ydl.process_ie_result(info, download=True)
+    src = next(WORK.glob(f"{vid}.src.*"))  # l'extension dépend du flux choisi
+
+    # Réencodage explicite : mono AAC 64 kbps (~30 Mo/h) et index en tête du fichier
+    # (+faststart) pour qu'Apple Podcasts puisse lire avant la fin du téléchargement.
+    path = WORK / f"{vid}.m4a"
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vn",
+                    "-ac", "1", "-c:a", "aac", "-b:a", "64k", "-movflags", "+faststart",
+                    str(path)], check=True)
+    src.unlink()
+
+    size = path.stat().st_size
+    if size > MAX_ASSET:
+        print(f"Ignoré {vid} : fichier trop gros ({size} octets)")
+        path.unlink()
+        return
+    title = info.get("title") or vid
+    db[vid] = {
+        "title": title,
+        "description": info.get("description") or "",
+        "url": upload(vid, title, path),
+        "size": size,
+        "duration": probe_duration(path),  # durée réelle du fichier, pas celle annoncée par Twitch
+        "date": info.get("timestamp") or datetime.now(timezone.utc).timestamp(),
+        "link": info.get("webpage_url", ""),
+        "thumbnail": info.get("thumbnail", ""),
+    }
+    path.unlink()
+    save_db(db)  # sauvegarde après chaque épisode, au cas où la suite échoue
 
 
 def build_feed(db: dict) -> None:

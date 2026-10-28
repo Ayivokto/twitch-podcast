@@ -5,6 +5,11 @@ on:
     - cron: "0 5 * * *"   # tous les jours à 5 h UTC (6-7 h en France)
     - cron: "0 15 * * *"  # et à 15 h UTC (17 h l'été, 16 h l'hiver en France)
   workflow_dispatch:       # bouton « Run workflow » pour lancer à la main
+    inputs:
+      rebuild:
+        description: "Retélécharger tous les épisodes déjà publiés"
+        type: boolean
+        default: false
 
 permissions:
   contents: write          # créer les Releases et pousser feed.xml
@@ -34,6 +39,7 @@ jobs:
         env:
           TWITCH_CHANNEL: ${{ vars.TWITCH_CHANNEL }}
           MAX_VODS: ${{ vars.MAX_VODS || '5' }}
+          REBUILD: ${{ inputs.rebuild }}
           GH_TOKEN: ${{ github.token }}
         run: python twitch2podcast.py
 
